@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kids Mall Broadcast Tool</title>
+<link rel="icon" type="image/png" href="assets/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #1FA8E0; --red: #E53330; --yellow: #F7B824; --green: #7DC242;
+  --dark: #1a1a2e; --cream: #FFF9F0; --white: #ffffff;
+  --shadow: 0 10px 30px rgba(0,0,0,.12);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Fredoka', sans-serif;
+  background: var(--cream);
+  color: var(--dark);
+  min-height: 100vh;
+  padding: 20px;
+}
+.container { max-width: 900px; margin: 0 auto; }
+
+header {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 24px 30px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+header img { height: 60px; }
+header h1 { color: var(--blue); font-size: 1.5rem; }
+header p { color: #666; font-size: .9rem; margin-top: 4px; }
+
+.card {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 30px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+.card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card h2 .step {
+  background: var(--blue);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+label { display: block; font-weight: 600; margin-bottom: 8px; font-size: .9rem; }
+input, textarea, select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #e5e5e5;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: .95rem;
+  background: var(--cream);
+  transition: border-color .2s;
+}
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--blue); }
+textarea { resize: vertical; min-height: 120px; font-family: 'Courier New', monospace; }
+
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.config-grid > div { }
+@media (max-width: 600px) { .config-grid { grid-template-columns: 1fr; } }
+
+.btn {
+  background: var(--red);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(229,51,48,.35);
+  transition: transform .2s;
+  width: 100%;
+}
+.btn:hover:not(:disabled) { transform: translateY(-2px); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-secondary { background: var(--blue); box-shadow: 0 8px 24px rgba(31,168,224,.35); }
+.btn-test { background: var(--yellow); color: var(--dark); box-shadow: 0 8px 24px rgba(247,184,36,.35); }
+
+.help {
+  font-size: .8rem;
+  color: #888;
+  margin-top: 6px;
+}
+
+.contacts-info {
+  background: var(--cream);
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-top: 10px;
+  font-size: .9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.contacts-info strong { color: var(--blue); }
+
+.log {
+  background: var(--dark);
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: .85rem;
+  max-height: 400px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+.log:empty { display: none; }
+.log .ok { color: #00ff00; }
+.log .err { color: #ff5555; }
+.log .info { color: #ffd700; }
+
+.progress-bar {
+  background: #e5e5e5;
+  border-radius: 50px;
+  height: 8px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+.progress-fill {
+  background: linear-gradient(90deg, var(--green), var(--blue));
+  height: 100%;
+  width: 0%;
+  transition: width .3s;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+.stat {
+  background: var(--cream);
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+}
+.stat-num { font-size: 1.5rem; font-weight: 700; }
+.stat-num.sent { color: var(--green); }
+.stat-num.fail { color: var(--red); }
+.stat-num.total { color: var(--blue); }
+.stat-label { font-size: .8rem; color: #666; }
+
+.warning {
+  background: #fff3cd;
+  border-left: 4px solid var(--yellow);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: .85rem;
+  margin-bottom: 16px;
+  color: #856404;
+}
+
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<header>
+  <img src="assets/logo.jpg" alt="Kids Mall" />
+  <div>
+    <h1>📢 Broadcast Tool</h1>
+    <p>Send approved WhatsApp templates to your customers</p>
+  </div>
+</header>
+
+<!-- LOGIN -->
+<div class="card" id="loginCard">
+  <h2>🔒 Sign In</h2>
+  <label>Password</label>
+  <input type="password" id="pwInput" placeholder="Enter access password" autocomplete="off" />
+  <button class="btn" style="margin-top: 14px;" onclick="checkLogin()">Sign In</button>
+  <p class="help">Contact admin if you don't have the password.</p>
+</div>
+
+<!-- MAIN APP (hidden until login) -->
+<div id="app" class="hidden">
+
+  <div class="warning">
+    ⚠️ <strong>Important:</strong> Only send to customers who explicitly opted-in to receive WhatsApp messages from Kids Mall. Unauthorized broadcasts violate Meta's policies and damage your account quality.
+  </div>
+
+  <!-- STEP 1: Configuration -->
+  <div class="card">
+    <h2><span class="step">1</span> API Configuration</h2>
+    <div class="config-grid">
+      <div>
+        <label>Phone Number ID</label>
+        <input type="text" id="phoneNumberId" value="1116477941544570" />
+      </div>
+      <div>
+        <label>Template Name</label>
+        <input type="text" id="templateName" value="tuesday_0lft5" />
+      </div>
+      <div>
+        <label>Language Code</label>
+        <select id="langCode">
+          <option value="ar">Arabic (ar)</option>
+          <option value="en">English (en)</option>
+          <option value="en_US">English US (en_US)</option>
+        </select>
+      </div>
+      <div>
+        <label>Delay between messages (ms)</label>
+        <input type="number" id="delayMs" value="500" min="0" max="5000" />
+      </div>
+    </div>
+    <label>Access Token</label>
+    <textarea id="accessToken" rows="3" placeholder="Paste your Meta access token here (starts with EAA...)"></textarea>
+    <p class="help">Token is stored only in your browser. Never sent anywhere except Meta's API.</p>
+  </div>
+
+  <!-- STEP 2: Contacts -->
+  <div class="card">
+    <h2><span class="step">2</span> Recipients</h2>
+    <label>Phone numbers (one per line, with country code)</label>
+    <textarea id="contacts" rows="6" placeholder="+96897XXXXXXX&#10;+96898XXXXXXX&#10;+96879XXXXXXX"></textarea>
+    <p class="help">Format: international with + sign, no spaces. Example: +96897269000</p>
+
+    <div style="margin-top: 12px;">
+      <label>Or upload CSV file (column named "phone")</label>
+      <input type="file" id="csvFile" accept=".csv" onchange="loadCSV(this)" />
+    </div>
+
+    <div class="contacts-info">
+      <span>Valid recipients: <strong id="contactCount">0</strong></span>
+      <button onclick="validateContacts()" style="background: none; border: 1px solid var(--blue); color: var(--blue); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-family: inherit;">Validate</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Send -->
+  <div class="card">
+    <h2><span class="step">3</span> Send</h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+      <button class="btn btn-test" onclick="sendBroadcast(true)" id="testBtn">🧪 Test (first number only)</button>
+      <button class="btn" onclick="sendBroadcast(false)" id="sendBtn">📢 Send to ALL</button>
+    </div>
+
+    <div id="progressArea" class="hidden">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-num total" id="statTotal">0</div><div class="stat-label">Total</div></div>
+        <div class="stat"><div class="stat-num sent" id="statSent">0</div><div class="stat-label">Sent ✅</div></div>
+        <div class="stat"><div class="stat-num fail" id="statFail">0</div><div class="stat-label">Failed ❌</div></div>
+      </div>
+    </div>
+
+    <div class="log" id="log"></div>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+// === Simple password gate (client-side, basic protection) ===
+const PASSWORD = "kidsmall2026"; // CHANGE THIS
+
+function checkLogin() {
+  const pw = document.getElementById('pwInput').value;
+  if (pw === PASSWORD) {
+    document.getElementById('loginCard').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    // Restore saved token if any
+    const savedToken = sessionStorage.getItem('km_token');
+    if (savedToken) document.getElementById('accessToken').value = savedToken;
+  } else {
+    alert('Wrong password');
+  }
+}
+document.getElementById('pwInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') checkLogin();
+});
+
+// === Helpers ===
+function log(msg, type = 'info') {
+  const el = document.getElementById('log');
+  const time = new Date().toLocaleTimeString();
+  const cls = type === 'ok' ? 'ok' : type === 'err' ? 'err' : 'info';
+  el.innerHTML += `<span class="${cls}">[${time}] ${msg}</span>\n`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function getContacts() {
+  const text = document.getElementById('contacts').value.trim();
+  if (!text) return [];
+  return text.split('\n')
+    .map(s => s.trim())
+    .filter(s => s.length > 0)
+    .map(s => {
+      // Remove spaces, dashes, parentheses
+      let n = s.replace(/[\s\-\(\)]/g, '');
+      // Ensure it starts with +
+      if (!n.startsWith('+')) n = '+' + n;
+      return n;
+    })
+    .filter(n => /^\+\d{8,15}$/.test(n));
+}
+
+function validateContacts() {
+  const contacts = getContacts();
+  document.getElementById('contactCount').textContent = contacts.length;
+  if (contacts.length > 0) {
+    log(`✓ Validated ${contacts.length} phone numbers`, 'ok');
+  } else {
+    log('No valid numbers found. Check format: +96897XXXXXXX', 'err');
+  }
+}
+
+function loadCSV(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const text = e.target.result;
+    const lines = text.split('\n');
+    const header = lines[0].toLowerCase().split(',').map(s => s.trim().replace(/"/g, ''));
+    const phoneIdx = header.findIndex(h => h.includes('phone') || h.includes('number') || h.includes('mobile'));
+    if (phoneIdx === -1) {
+      alert('CSV must have a column named "phone" or "number" or "mobile"');
+      return;
+    }
+    const phones = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',').map(s => s.trim().replace(/"/g, ''));
+      if (cols[phoneIdx]) phones.push(cols[phoneIdx]);
+    }
+    document.getElementById('contacts').value = phones.join('\n');
+    validateContacts();
+    log(`✓ Loaded ${phones.length} phones from CSV`, 'ok');
+  };
+  reader.readAsText(file);
+}
+
+// === Send single message ===
+async function sendOne(token, phoneNumberId, to, templateName, langCode) {
+  const url = `https://graph.facebook.com/v22.0/${phoneNumberId}/messages`;
+  const body = {
+    messaging_product: "whatsapp",
+    to: to.replace('+', ''), // Meta wants no + prefix
+    type: "template",
+    template: {
+      name: templateName,
+      language: { code: langCode }
+    }
+  };
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error?.message || 'Unknown error');
+  }
+  return data;
+}
+
+// === Broadcast ===
+async function sendBroadcast(testMode) {
+  const token = document.getElementById('accessToken').value.trim();
+  const phoneNumberId = document.getElementById('phoneNumberId').value.trim();
+  const templateName = document.getElementById('templateName').value.trim();
+  const langCode = document.getElementById('langCode').value;
+  const delayMs = parseInt(document.getElementById('delayMs').value) || 500;
+
+  if (!token) { alert('Paste your access token'); return; }
+  if (!templateName) { alert('Enter template name'); return; }
+
+  let contacts = getContacts();
+  if (contacts.length === 0) { alert('No valid contacts'); return; }
+
+  if (testMode) {
+    contacts = contacts.slice(0, 1);
+    log(`🧪 TEST MODE: sending only to ${contacts[0]}`, 'info');
+  } else {
+    if (!confirm(`Send to ${contacts.length} contacts? This will use real WhatsApp credits.`)) return;
+  }
+
+  // Save token in session
+  sessionStorage.setItem('km_token', token);
+
+  // Setup UI
+  document.getElementById('progressArea').classList.remove('hidden');
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('testBtn').disabled = true;
+  document.getElementById('statTotal').textContent = contacts.length;
+  document.getElementById('statSent').textContent = '0';
+  document.getElementById('statFail').textContent = '0';
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('log').innerHTML = '';
+
+  log(`📨 Starting broadcast — ${contacts.length} recipients, template: ${templateName} (${langCode})`, 'info');
+
+  let sent = 0, failed = 0;
+  for (let i = 0; i < contacts.length; i++) {
+    const num = contacts[i];
+    try {
+      const r = await sendOne(token, phoneNumberId, num, templateName, langCode);
+      sent++;
+      document.getElementById('statSent').textContent = sent;
+      log(`✅ ${num} — sent (msg id: ${r.messages?.[0]?.id?.slice(0,20)}...)`, 'ok');
+    } catch (e) {
+      failed++;
+      document.getElementById('statFail').textContent = failed;
+      log(`❌ ${num} — ${e.message}`, 'err');
+    }
+    document.getElementById('progressFill').style.width = ((i + 1) / contacts.length * 100) + '%';
+    if (i < contacts.length - 1 && delayMs > 0) {
+      await new Promise(r => setTimeout(r, delayMs));
+    }
+  }
+
+  log(`\n🏁 DONE. Sent: ${sent} | Failed: ${failed} | Total: ${contacts.length}`, 'info');
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('testBtn').disabled = false;
+}
+</script>
+
+</body>
+</html>
